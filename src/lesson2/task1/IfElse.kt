@@ -62,7 +62,14 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String = TODO()
+fun ageDescription(age: Int): String {
+    val ageMod = age % 10
+    return when {
+        ageMod == 1 && age !in 5..20 && age != 111 -> "$age год"
+        (ageMod == 2 || ageMod == 3 || ageMod == 4) && age !in 5..20 -> "$age года"
+        else -> "$age лет"
+    }
+}
 
 /**
  * Простая
@@ -86,7 +93,14 @@ fun timeForHalfWay(t1: Double, v1: Double,
  */
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
-                       rookX2: Int, rookY2: Int): Int = TODO()
+                       rookX2: Int, rookY2: Int): Int {
+    return when {
+        kingX != rookX1 && kingY != rookY1 && kingX != rookX2 && kingY != rookY2 -> 0
+        kingX == rookX1 || kingY == rookY1 && kingX != rookX2 && kingY != rookY2 -> 1
+        kingX != rookX1 && kingY != rookY1 && kingX == rookX2 || kingY == rookY2 -> 2
+        else -> 3
+    }
+}
 
 /**
  * Простая
@@ -100,7 +114,14 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
  */
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
-                          bishopX: Int, bishopY: Int): Int = TODO()
+                          bishopX: Int, bishopY: Int): Int {
+    return when {
+        (kingX != rookX && kingY != rookY) && kotlin.math.abs(kingX - bishopX) != kotlin.math.abs(kingY - bishopY) -> 0
+        (kingX == rookX || kingY == rookY) && kotlin.math.abs(kingX - bishopX) != kotlin.math.abs(kingY - bishopY) -> 1
+        (kingX != rookX && kingY != rookY) && kotlin.math.abs(kingX - bishopX) == kotlin.math.abs(kingY - bishopY) -> 2
+        else -> 3
+    }
+}
 
 /**
  * Простая
@@ -120,4 +141,13 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
+    (a < c && b < c) || (c < a && d < a) -> -1
+    (a < c && b < d) -> b - c
+    (a > c && b > d) -> d - a
+    (a > c && b < d) -> b - a
+    else -> d - c
+}
+
+
+
