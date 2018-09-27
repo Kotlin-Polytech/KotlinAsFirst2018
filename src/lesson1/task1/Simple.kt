@@ -67,7 +67,8 @@ fun seconds(hours: Int, minutes: Int, seconds: Int) = hours * 3600 + minutes * 6
  * Определить длину того же отрезка в метрах (в данном случае 18.98).
  * 1 сажень = 3 аршина = 48 вершков, 1 вершок = 4.445 см.
  */
-fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double = (sagenes * 48 * 4.445 + arshins * 16 * 4.445 + vershoks * 4.445) / 100
+fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double =
+        (sagenes * 48 * 4.445 + arshins * 16 * 4.445 + vershoks * 4.445) / 100
 
 /**
  * Тривиальная
@@ -100,7 +101,8 @@ fun thirdDigit(number: Int): Int = (number / 100) % 10
  * прибыл на станцию назначения в h2 часов m2 минут того же дня (например в 13:01).
  * Определите время поезда в пути в минутах (в данном случае 216).
  */
-fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int = (hoursArrive - hoursDepart) * 60 + (minutesArrive - minutesDepart)
+fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int =
+        (hoursArrive - hoursDepart) * 60 + (minutesArrive - minutesDepart)
 
 /**
  * Простая
@@ -109,7 +111,10 @@ fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minute
  * Сколько денег будет на счету через 3 года (с учётом сложных процентов)?
  * Например, 100 рублей под 10% годовых превратятся в 133.1 рубля
  */
-fun accountInThreeYears(initial: Int, percent: Int): Double = initial * (1 + percent / 100.0) * (1 + percent / 100.0) * (1 + percent / 100.0)
+fun accountInThreeYears(initial: Int, percent: Int): Double {
+    val percentInYear = (1 + percent / 100.0)
+    return initial * percentInYear * percentInYear * percentInYear
+}
 
 /**
  * Простая
