@@ -64,9 +64,10 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  */
 fun ageDescription(age: Int): String {
     val ageMod = age % 10
+    val ageException = age !in 5..20 && age !in 105..120
     return when {
-        ageMod == 1 && age !in 5..20 && age != 111 -> "$age год"
-        (ageMod == 2 || ageMod == 3 || ageMod == 4) && age !in 5..20 -> "$age года"
+        ageMod == 1 && age != 111 && ageException -> "$age год"
+        (ageMod == 2 || ageMod == 3 || ageMod == 4) && ageException -> "$age года"
         else -> "$age лет"
     }
 }
@@ -94,10 +95,12 @@ fun timeForHalfWay(t1: Double, v1: Double,
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
                        rookX2: Int, rookY2: Int): Int {
+    val firstThreat = kingX == rookX1 || kingY == rookY1
+    val secondThreat = kingX == rookX2 || kingY == rookY2
     return when {
-        kingX != rookX1 && kingY != rookY1 && kingX != rookX2 && kingY != rookY2 -> 0
-        kingX == rookX1 || kingY == rookY1 && kingX != rookX2 && kingY != rookY2 -> 1
-        kingX != rookX1 && kingY != rookY1 && kingX == rookX2 || kingY == rookY2 -> 2
+        !firstThreat && !secondThreat -> 0
+        firstThreat && !secondThreat -> 1
+        !firstThreat && secondThreat -> 2
         else -> 3
     }
 }
@@ -115,10 +118,12 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
                           bishopX: Int, bishopY: Int): Int {
+    val rookThreat = kingX == rookX || kingY == rookY
+    val bishopThreat = kotlin.math.abs(kingX - bishopX) == kotlin.math.abs(kingY - bishopY)
     return when {
-        (kingX != rookX && kingY != rookY) && kotlin.math.abs(kingX - bishopX) != kotlin.math.abs(kingY - bishopY) -> 0
-        (kingX == rookX || kingY == rookY) && kotlin.math.abs(kingX - bishopX) != kotlin.math.abs(kingY - bishopY) -> 1
-        (kingX != rookX && kingY != rookY) && kotlin.math.abs(kingX - bishopX) == kotlin.math.abs(kingY - bishopY) -> 2
+        !rookThreat && !bishopThreat -> 0
+        rookThreat && !bishopThreat -> 1
+        !rookThreat && bishopThreat -> 2
         else -> 3
     }
 }
@@ -145,9 +150,6 @@ fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
     (a < c && b < c) || (c < a && d < a) -> -1
     (a < c && b < d) -> b - c
     (a > c && b > d) -> d - a
-    (a > c && b < d) -> b - a
+    (a > c && b < d) || (a == c && b < d) || (a > c && b == d) -> b - a
     else -> d - c
 }
-
-
-
