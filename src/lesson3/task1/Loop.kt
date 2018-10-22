@@ -68,7 +68,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     var result = 1
-    var number = n
+    var number = abs(n)
     while (number > 9) {
         result++
         number /= 10
@@ -125,13 +125,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    var result = n / 2
-    while (n % result != 0) {
-        result--
-    }
-    return result
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая
@@ -222,7 +216,20 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = revert(n) == n
+fun isPalindrome(n: Int): Boolean {
+    var old = n
+    var firstDigit = 1
+    var lastDigit = 1
+    for (i in digitNumber(n) - 1 downTo 0) {
+        firstDigit = (n / 10.0.pow(i)).toInt()
+        if (firstDigit > 9) firstDigit %= 10
+        lastDigit = old % 10
+        old /= 10
+        if (firstDigit == lastDigit) continue
+        else break
+    }
+    return firstDigit == lastDigit
+}
 
 /**
  * Средняя
@@ -243,7 +250,7 @@ fun hasDifferentDigits(n: Int): Boolean {
         if (new == mod) continue
         else break
     }
-    return (new != mod)
+    return if (n > 9) (new != mod) else false
 }
 
 /**

@@ -70,6 +70,7 @@ class Tests {
         assertEquals(2, digitNumber(99))
         assertEquals(3, digitNumber(123))
         assertEquals(10, digitNumber(Int.MAX_VALUE))
+        assertEquals(10, digitNumber(-1370252516))
     }
 
     @Test
@@ -207,6 +208,7 @@ class Tests {
         assertFalse(isPalindrome(3653))
         assertTrue(isPalindrome(15751))
         assertTrue(isPalindrome(24688642))
+        assertFalse(isPalindrome(2147483647))
     }
 
     @Test
@@ -217,6 +219,8 @@ class Tests {
         assertTrue(hasDifferentDigits(222266666))
         assertFalse(hasDifferentDigits(0))
         assertFalse(hasDifferentDigits(777))
+        assertFalse(hasDifferentDigits(1))
+        assertFalse(hasDifferentDigits(8))
     }
 
     @Test
