@@ -3,6 +3,7 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import lesson3.task1.isPrime
 import kotlin.math.*
 
 /**
@@ -200,21 +201,31 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO() /*{
-    var result = n
-    var list = listOf<Int>()
-    while (isPrime(result) == false) {
-        if (result % prime(i) == 0) {
-            result /= prime(i)
-            list += prime(i)
-        } else i++
-    }
-    return list
-}
 fun prime(n: Int): Int {
-
+    var counter = 0
+    var result = 0
+    while (counter != n) {
+        result++
+        if (isPrime(result)) counter++
+    }
+    return result
 }
-*/
+
+fun factorize(n: Int): List<Int> {
+    var old = n
+    val list = mutableListOf<Int>()
+    var i = 1
+    if (isPrime(old)) return list + n else {
+        while (!isPrime(old)) {
+            if (old % prime(i) == 0) {
+                old /= prime(i)
+                list.add(prime(i))
+            } else i++
+        }
+    }
+    list.add(old)
+    return list.sorted()
+}
 
 /**
  * Сложная
@@ -223,7 +234,7 @@ fun prime(n: Int): Int {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*", prefix = "", postfix = "")
 
 /**
  * Средняя
@@ -253,17 +264,22 @@ fun convert(n: Int, base: Int): List<Int> {
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
+fun alphabet(n: Int): Char {
+    var letter = 'a'
+    var number = n
+    while (number != 1) {
+        number--
+        letter++
+    }
+    return letter
+}
+
 fun convertToString(n: Int, base: Int): String {
     var string = ""
     for (i in 0 until convert(n, base).size) {
-        when {
-            convert(n, base)[i] == 10 -> string += "a"
-            convert(n, base)[i] == 11 -> string += "c"
-            convert(n, base)[i] == 12 -> string += "c"
-            convert(n, base)[i] == 13 -> string += "d"
-            convert(n, base)[i] == 14 -> string += "e"
-            convert(n, base)[i] == 35 -> string += "z"
-            else -> string += convert(n, base)[i]
+        string += when (convert(n, base)[i] <= 9) {
+            true -> convert(n, base)[i]
+            false -> alphabet(convert(n, base)[i] - 9)
         }
     }
     return string

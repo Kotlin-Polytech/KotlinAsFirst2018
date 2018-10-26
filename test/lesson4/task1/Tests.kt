@@ -182,6 +182,13 @@ class Tests {
     }
 
     @Test
+    fun alphabet() {
+        assertEquals('a', alphabet(1))
+        assertEquals('b', alphabet(2))
+        assertEquals('z', alphabet(26))
+    }
+
+    @Test
     @Tag("Hard")
     fun convertToString() {
         assertEquals("1", convertToString(1, 2))
