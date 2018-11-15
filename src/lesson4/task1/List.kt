@@ -337,7 +337,7 @@ fun russianHelp(list: List<Int>): String {
         list[0] == 8 -> "восемьсот"
         list[0] == 9 -> "девятьсот"
         else -> ""
-    } + if (list[1] != 0 && list[2] != 0) " " else ""
+    } + if (list[1] != 0 || list[2] != 0) " " else ""
     if ((list.size == 2 || list.size == 3) && list[list.size - 2] != 1) {
         string += when {
             list[list.size - 2] == 2 -> "двадцать"
@@ -349,7 +349,7 @@ fun russianHelp(list: List<Int>): String {
             list[list.size - 2] == 8 -> "восемьдесят"
             list[list.size - 2] == 9 -> "девяносто"
             else -> ""
-        } + if (list[1] != 0 || list[2] != 0) " " else ""
+        } + if (list.last() != 0 && list[list.size - 2] != 1 && list[list.size - 2] != 0) " " else ""
     }
     if ((list.size == 2 || list.size == 3) && list[list.size - 2] == 1) {
         string += when {
