@@ -311,7 +311,7 @@ fun russian(n: Int): String {
     if (n > 999) {
         string = (russianHelp(firstList) + " ").replace("два ", "две ").replace("один ", "одна ")
         string += when {
-            firstList.last() == 1 -> "тысяча"
+            firstList.last() == 1 && firstList[firstList.size - 2] != 1 -> "тысяча"
             firstList.last() == 2 || firstList.last() == 3 || firstList.last() == 4 -> "тысячи"
             else -> "тысяч"
         }
