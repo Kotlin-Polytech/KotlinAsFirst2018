@@ -182,13 +182,6 @@ class Tests {
     }
 
     @Test
-    fun alphabet() {
-        assertEquals('a', alphabet(1))
-        assertEquals('b', alphabet(2))
-        assertEquals('z', alphabet(26))
-    }
-
-    @Test
     @Tag("Hard")
     fun convertToString() {
         assertEquals("1", convertToString(1, 2))
@@ -239,5 +232,8 @@ class Tests {
         assertEquals("двести тысяч два", russian(200002))
         assertEquals("девятьсот тысяч", russian(900000))
         assertEquals("двенадцать", russian(12))
+        assertEquals("сто тысяч двенадцать", russian(100012))
+        assertEquals("один", russian(1))
+        assertEquals("два", russian(2))
     }
 }

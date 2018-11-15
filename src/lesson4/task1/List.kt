@@ -4,7 +4,8 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import lesson3.task1.isPrime
-import kotlin.math.*
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * Пример
@@ -116,11 +117,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double {
-    var list = v
-    list = list.map { it * it }
-    return sqrt(list.sum())
-}
+fun abs(v: List<Double>): Double = sqrt((v.map { it * it }).sum())
 
 /**
  * Простая
@@ -138,10 +135,8 @@ fun mean(list: List<Double>): Double = if (list.isEmpty()) 0.0 else list.sum() /
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    val average = mean(list)
-    for (i in 0 until list.size) {
-        list[i] -= average
-    }
+    val mean = mean(list)
+    if (list.isNotEmpty()) list.replaceAll { it - mean }
     return list
 }
 
@@ -152,12 +147,8 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
  */
-fun times(a: List<Double>, b: List<Double>): Double {
-    var result = 0.0
-    for (i in 0 until a.size)
-        result += a[i] * b[i]
-    return result
-}
+fun times(a: List<Double>, b: List<Double>): Double =
+        a.foldIndexed(0.0) { index, sum, it -> sum + it * b[index] }
 
 /**
  * Средняя
@@ -167,13 +158,8 @@ fun times(a: List<Double>, b: List<Double>): Double {
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0.0 при любом x.
  */
-fun polynom(p: List<Double>, x: Double): Double {
-    var result = 0.0
-    for (i in 0 until p.size) {
-        result += p[i] * x.pow(i)
-    }
-    return result
-}
+fun polynom(p: List<Double>, x: Double): Double =
+        p.foldIndexed(0.0) { index, sum, it -> sum + it * x.pow(index) }
 
 /**
  * Средняя
@@ -234,7 +220,7 @@ fun factorize(n: Int): List<Int> {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*", prefix = "", postfix = "")
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*")
 
 /**
  * Средняя
@@ -264,26 +250,8 @@ fun convert(n: Int, base: Int): List<Int> {
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
-fun alphabet(n: Int): Char {
-    var letter = 'a'
-    var number = n
-    while (number != 1) {
-        number--
-        letter++
-    }
-    return letter
-}
-
-fun convertToString(n: Int, base: Int): String {
-    var string = ""
-    for (i in 0 until convert(n, base).size) {
-        string += when (convert(n, base)[i] <= 9) {
-            true -> convert(n, base)[i]
-            false -> alphabet(convert(n, base)[i] - 9)
-        }
-    }
-    return string
-}
+fun convertToString(n: Int, base: Int): String =
+        convert(n, base).joinToString(separator = "") { if (it < 10) "$it" else 'a' + it - 10 + "" }
 
 /**
  * Средняя
@@ -292,15 +260,9 @@ fun convertToString(n: Int, base: Int): String {
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int {
-    var sum = 0.0
-    var power = digits.size - 1
-    for (i in 0 until digits.size) {
-        sum += digits[i] * base.toDouble().pow(power)
-        power--
-    }
-    return sum.toInt()
-}
+fun decimal(digits: List<Int>, base: Int): Int = digits.foldIndexed(0.0) { index, sum, it ->
+    sum + it * base.toDouble().pow(digits.size - 1 - index)
+}.toInt()
 
 /**
  * Сложная
@@ -330,4 +292,93 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun listMaker(n: Int): MutableList<Int> {
+    var new: Int
+    var old = n
+    val list = mutableListOf<Int>()
+    while (old > 0) {
+        new = old % 10
+        list.add(0, new)
+        old /= 10
+    }
+    return list
+}
+
+fun russian(n: Int): String {
+    var string = ""
+    val firstList = listMaker(n / 1000)
+    val secondList = listMaker(n % 1000)
+    if (n > 999) {
+        string = (russianHelp(firstList) + " ").replace("два ", "две ")
+        string += when {
+            firstList.last() == 1 -> "тысяча"
+            firstList.last() == 2 || firstList.last() == 3 || firstList.last() == 4 -> "тысячи"
+            else -> "тысяч"
+        }
+        if (secondList.isNotEmpty()) string += " " +
+                russianHelp(secondList)
+    } else {
+        string += russianHelp(secondList)
+    }
+    return string
+}
+
+
+fun russianHelp(list: List<Int>): String {
+    var string = ""
+    if (list.size == 3) string += when {
+        list[0] == 1 -> "сто"
+        list[0] == 2 -> "двести"
+        list[0] == 3 -> "триста"
+        list[0] == 4 -> "четыреста"
+        list[0] == 5 -> "пятьсот"
+        list[0] == 6 -> "шестьсот"
+        list[0] == 7 -> "семьсот"
+        list[0] == 8 -> "восемьсот"
+        list[0] == 9 -> "девятьсот"
+        else -> ""
+    } + if (list[1] != 0 && list[2] != 0) " " else ""
+    if ((list.size == 2 || list.size == 3) && list[list.size - 2] != 1) {
+        string += when {
+            list[list.size - 2] == 2 -> "двадцать"
+            list[list.size - 2] == 3 -> "тридцать"
+            list[list.size - 2] == 4 -> "сорок"
+            list[list.size - 2] == 5 -> "пятьдесят"
+            list[list.size - 2] == 6 -> "шестьдесят"
+            list[list.size - 2] == 7 -> "семьдесят"
+            list[list.size - 2] == 8 -> "восемьдесят"
+            list[list.size - 2] == 9 -> "девяносто"
+            else -> ""
+        } + if (list[1] != 0 || list[2] != 0) " " else ""
+    }
+    if ((list.size == 2 || list.size == 3) && list[list.size - 2] == 1) {
+        string += when {
+            list.last() == 0 -> "десять"
+            list.last() == 1 -> "одиннадцать"
+            list.last() == 2 -> "двенадцать"
+            list.last() == 3 -> "тринадцать"
+            list.last() == 4 -> "четырнадцать"
+            list.last() == 5 -> "пятнадцать"
+            list.last() == 6 -> "шестьнадцать"
+            list.last() == 7 -> "семнадцать"
+            list.last() == 8 -> "восемнадцать"
+            list.last() == 9 -> "девятнадцать"
+            else -> ""
+        }
+    } else {
+        string += when {
+            list.last() == 1 -> "один"
+            list.last() == 2 -> "два"
+            list.last() == 3 -> "три"
+            list.last() == 4 -> "четыре"
+            list.last() == 5 -> "пять"
+            list.last() == 6 -> "шесть"
+            list.last() == 7 -> "семь"
+            list.last() == 8 -> "восемь"
+            list.last() == 9 -> "девять"
+            list.last() == 0 -> ""
+            else -> ""
+        }
+    }
+    return string
+}
