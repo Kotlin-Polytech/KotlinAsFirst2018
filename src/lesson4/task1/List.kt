@@ -309,7 +309,7 @@ fun russian(n: Int): String {
     val firstList = listMaker(n / 1000)
     val secondList = listMaker(n % 1000)
     if (n > 999) {
-        string = (russianHelp(firstList) + " ").replace("два ", "две ")
+        string = (russianHelp(firstList) + " ").replace("два ", "две ").replace("один ", "одна ")
         string += when {
             firstList.last() == 1 -> "тысяча"
             firstList.last() == 2 || firstList.last() == 3 || firstList.last() == 4 -> "тысячи"
