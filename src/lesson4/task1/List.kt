@@ -310,10 +310,18 @@ fun russian(n: Int): String {
     val secondList = listMaker(n % 1000)
     if (n > 999) {
         string = (russianHelp(firstList) + " ").replace("два ", "две ").replace("один ", "одна ")
-        string += when {
-            firstList.last() == 1 && firstList[firstList.size - 2] != 1 -> "тысяча"
-            firstList.last() == 2 || firstList.last() == 3 || firstList.last() == 4 -> "тысячи"
-            else -> "тысяч"
+        if (n < 10000) {
+            string += when {
+                firstList.last() == 1 -> "тысяча"
+                (firstList.last() == 2 || firstList.last() == 3 || firstList.last() == 4) -> "тысячи"
+                else -> "тысяч"
+            }
+        } else {
+            string += when {
+                firstList.last() == 1 && firstList[firstList.size - 2] != 1 -> "тысяча"
+                (firstList.last() == 2 || firstList.last() == 3 || firstList.last() == 4) && (firstList[firstList.size - 2] != 1) -> "тысячи"
+                else -> "тысяч"
+            }
         }
         if (secondList.isNotEmpty()) string += " " +
                 russianHelp(secondList)
