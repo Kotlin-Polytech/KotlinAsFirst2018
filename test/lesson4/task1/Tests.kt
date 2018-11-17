@@ -125,6 +125,8 @@ class Tests {
         assertEquals(0.0, times(listOf(), listOf()), 1e-5)
         assertEquals(-5.0, times(listOf(1.0, -4.0), listOf(3.0, 2.0)), 1e-5)
         assertEquals(-19.0, times(listOf(-1.0, 2.0, -3.0), listOf(3.0, -2.0, 4.0)), 1e-5)
+        assertEquals(-9.0, times(listOf(-1.0, 2.0, -3.0), listOf(3.0, 3.0, 4.0)), 1e-5)
+        assertEquals(-17.0, times(listOf(-1.0, -1.0, -3.0), listOf(3.0, 2.0, 4.0)), 1e-5)
     }
 
     @Test
@@ -204,6 +206,7 @@ class Tests {
     @Test
     @Tag("Hard")
     fun decimalFromString() {
+        assertEquals(250, decimalFromString("13c", 14))
         assertEquals(1, decimalFromString("1", 2))
         assertEquals(100, decimalFromString("1210", 4))
         assertEquals(250, decimalFromString("13c", 14))
@@ -225,6 +228,12 @@ class Tests {
     @Test
     @Tag("Impossible")
     fun russian() {
+        assertEquals("сто тысяч", russian(100000))
+        assertEquals("сто двадцать одна тысяча", russian(121000))
+        assertEquals("двести восемьдесят тысяч", russian(280000))
+        assertEquals("сто девятнадцать тысяч пятьсот восемь", russian(119508))
+        assertEquals("одна тысяча пятьсот восемь", russian(1508))
+        assertEquals("одиннадцать тысяч пятьсот восемь", russian(11508))
         assertEquals("триста семьдесят пять", russian(375))
         assertEquals("двадцать две тысячи девятьсот шестьдесят четыре", russian(22964))
         assertEquals("сто девятнадцать тысяч пятьсот восемь", russian(119508))

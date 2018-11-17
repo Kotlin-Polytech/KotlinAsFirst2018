@@ -117,7 +117,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = sqrt((v.map { it * it }).sum())
+fun abs(v: List<Double>): Double = sqrt(v.sumByDouble { it * it })
 
 /**
  * Простая
@@ -136,7 +136,7 @@ fun mean(list: List<Double>): Double = if (list.isEmpty()) 0.0 else list.sum() /
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     val mean = mean(list)
-    if (list.isNotEmpty()) list.replaceAll { it - mean }
+    list.replaceAll { it - mean }
     return list
 }
 
@@ -147,8 +147,8 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
  */
-fun times(a: List<Double>, b: List<Double>): Double =
-        a.foldIndexed(0.0) { index, sum, it -> sum + it * b[index] }
+fun times(a: List<Double>, b: List<Double>): Double = (a.zip(b) { one, two -> one * two }).sum()
+// a.foldIndexed(0.0) { index, sum, it -> sum + it * b[index] }
 
 /**
  * Средняя
@@ -158,8 +158,8 @@ fun times(a: List<Double>, b: List<Double>): Double =
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0.0 при любом x.
  */
-fun polynom(p: List<Double>, x: Double): Double =
-        p.foldIndexed(0.0) { index, sum, it -> sum + it * x.pow(index) }
+fun polynom(p: List<Double>, x: Double): Double = (p.mapIndexed { index, it -> it * x.pow(index) }).sum()
+// p.foldIndexed(0.0) { index, sum, it -> sum + it * x.pow(index) }
 
 /**
  * Средняя
@@ -187,25 +187,16 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun prime(n: Int): Int {
-    var counter = 0
-    var result = 0
-    while (counter != n) {
-        result++
-        if (isPrime(result)) counter++
-    }
-    return result
-}
-
 fun factorize(n: Int): List<Int> {
     var old = n
     val list = mutableListOf<Int>()
-    var i = 1
+    var i = 2
+
     if (isPrime(old)) return list + n else {
         while (!isPrime(old)) {
-            if (old % prime(i) == 0) {
-                old /= prime(i)
-                list.add(prime(i))
+            if (old % i == 0) {
+                old /= i
+                list.add(i)
             } else i++
         }
     }
@@ -233,6 +224,7 @@ fun convert(n: Int, base: Int): List<Int> {
     var number = n
     var mod: Int
     val list = mutableListOf<Int>()
+
     while (number >= base) {
         mod = number % base
         number /= base
@@ -251,7 +243,7 @@ fun convert(n: Int, base: Int): List<Int> {
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
 fun convertToString(n: Int, base: Int): String =
-        convert(n, base).joinToString(separator = "") { if (it < 10) "$it" else 'a' + it - 10 + "" }
+        convert(n, base).joinToString(separator = "") { if (it < 10) "$it" else "${'a' + it - 10}" }
 
 /**
  * Средняя
@@ -260,9 +252,10 @@ fun convertToString(n: Int, base: Int): String =
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = digits.foldIndexed(0.0) { index, sum, it ->
-    sum + it * base.toDouble().pow(digits.size - 1 - index)
-}.toInt()
+fun decimal(digits: List<Int>, base: Int): Int =
+        digits.foldIndexed(0.0) { index, sum, it ->
+            sum + it * base.toDouble().pow(digits.size - 1 - index)
+        }.toInt()
 
 /**
  * Сложная
@@ -273,7 +266,16 @@ fun decimal(digits: List<Int>, base: Int): Int = digits.foldIndexed(0.0) { index
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+
+    val list = str.chunked(1)
+    val list2 = list.map { it -> it.single().toInt() }
+
+    return list2.foldIndexed(0.0) { index, sum, it ->
+        if (it < 90) sum + (it - 48) * base.toDouble().pow(list2.size - 1 - index)
+        else sum + (it - 87) * base.toDouble().pow(list2.size - 1 - index)
+    }.toInt()
+}
 
 /**
  * Сложная
@@ -292,101 +294,32 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun listMaker(n: Int): MutableList<Int> {
-    var new: Int
-    var old = n
-    val list = mutableListOf<Int>()
-    while (old > 0) {
-        new = old % 10
-        list.add(0, new)
-        old /= 10
-    }
-    return list
-}
-
 fun russian(n: Int): String {
-    var string = ""
-    val firstList = listMaker(n / 1000)
-    val secondList = listMaker(n % 1000)
-    if (n > 999) {
-        string = (russianHelp(firstList) + " ").replace("два ", "две ").replace("один ", "одна ")
-        if (n < 10000) {
-            string += when {
-                firstList.last() == 1 -> "тысяча"
-                (firstList.last() == 2 || firstList.last() == 3 || firstList.last() == 4) -> "тысячи"
-                else -> "тысяч"
-            }
-        } else {
-            string += when {
-                firstList.last() == 1 && firstList[firstList.size - 2] != 1 -> "тысяча"
-                (firstList.last() == 2 || firstList.last() == 3 || firstList.last() == 4) && (firstList[firstList.size - 2] != 1) -> "тысячи"
-                else -> "тысяч"
-            }
-        }
-        if (secondList.isNotEmpty()) string += " " +
-                russianHelp(secondList)
-    } else {
-        string += russianHelp(secondList)
-    }
-    return string
-}
+    val hundreds = listOf("", " сто", " двести", " триста", " четыреста", " пятьсот",
+            " шестьсот", " семьсот", " восемьсот", " девятьсот")
+    val tenToNineteen = listOf(" десять", " одиннадцать", " двенадцать", " тринадцать", " четырнадцать",
+            " пятнадцать", " шестнадцать", " семнадцать", " восемнадцать", " девятнадцать")
+    val decades = listOf("", "", " двадцать", " тридцать", " сорок", " пятьдесят", " шестьдесят",
+            " семьдесят", " восемьдесят", " девяносто")
+    val units = listOf("", " один", " два", " три", " четыре", " пять",
+            " шесть", " семь", " восемь", " девять", " две", " одна")
 
+    var answer = ""
+    val digits = listOf(n % 10, n / 10 % 10, n / 100 % 10, n / 1000 % 10, n / 10000 % 10, n / 100000)
 
-fun russianHelp(list: List<Int>): String {
-    var string = ""
-    if (list.size == 3) string += when {
-        list[0] == 1 -> "сто"
-        list[0] == 2 -> "двести"
-        list[0] == 3 -> "триста"
-        list[0] == 4 -> "четыреста"
-        list[0] == 5 -> "пятьсот"
-        list[0] == 6 -> "шестьсот"
-        list[0] == 7 -> "семьсот"
-        list[0] == 8 -> "восемьсот"
-        list[0] == 9 -> "девятьсот"
-        else -> ""
-    } + if (list[1] != 0 || list[2] != 0) " " else ""
-    if ((list.size == 2 || list.size == 3) && list[list.size - 2] != 1) {
-        string += when {
-            list[list.size - 2] == 2 -> "двадцать"
-            list[list.size - 2] == 3 -> "тридцать"
-            list[list.size - 2] == 4 -> "сорок"
-            list[list.size - 2] == 5 -> "пятьдесят"
-            list[list.size - 2] == 6 -> "шестьдесят"
-            list[list.size - 2] == 7 -> "семьдесят"
-            list[list.size - 2] == 8 -> "восемьдесят"
-            list[list.size - 2] == 9 -> "девяносто"
-            else -> ""
-        } + if (list.last() != 0 && list[list.size - 2] != 1 && list[list.size - 2] != 0) " " else ""
-    }
-    if ((list.size == 2 || list.size == 3) && list[list.size - 2] == 1) {
-        string += when {
-            list.last() == 0 -> "десять"
-            list.last() == 1 -> "одиннадцать"
-            list.last() == 2 -> "двенадцать"
-            list.last() == 3 -> "тринадцать"
-            list.last() == 4 -> "четырнадцать"
-            list.last() == 5 -> "пятнадцать"
-            list.last() == 6 -> "шестьнадцать"
-            list.last() == 7 -> "семнадцать"
-            list.last() == 8 -> "восемнадцать"
-            list.last() == 9 -> "девятнадцать"
-            else -> ""
-        }
-    } else {
-        string += when {
-            list.last() == 1 -> "один"
-            list.last() == 2 -> "два"
-            list.last() == 3 -> "три"
-            list.last() == 4 -> "четыре"
-            list.last() == 5 -> "пять"
-            list.last() == 6 -> "шесть"
-            list.last() == 7 -> "семь"
-            list.last() == 8 -> "восемь"
-            list.last() == 9 -> "девять"
-            list.last() == 0 -> ""
-            else -> ""
-        }
-    }
-    return string
+    answer += hundreds[digits[5]] +
+            if (digits[4] == 1) tenToNineteen[digits[3]] else decades[digits[4]] +
+                    if (digits[4] != 1) if (digits[3] != 1 && digits[3] != 2) units[digits[3]] else units[12 - digits[3]] else ""
+
+    if (digits[3] != 0 || digits[4] != 0 || digits[5] != 0) answer += if (digits[4] != 1) when {
+        digits[3] == 1 -> " тысяча"
+        digits[3] == 2 || digits[3] == 3 || digits[3] == 4 -> " тысячи"
+        else -> " тысяч"
+    } else " тысяч"
+
+    answer += hundreds[digits[2]] +
+            if (digits[1] == 1) tenToNineteen[digits[0]] else decades[digits[1]] +
+                    if (digits[1] != 1) units[digits[0]] else ""
+
+    return answer.trim()
 }
