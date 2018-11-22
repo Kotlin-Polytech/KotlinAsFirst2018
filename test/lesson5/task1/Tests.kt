@@ -155,6 +155,8 @@ class Tests {
     fun containsIn() {
         assertTrue(containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")))
         assertFalse(containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")))
+        assertFalse(containsIn(mapOf("a" to "z", "b" to "sour"), mapOf("a" to "z", "b" to "sweet")))
+        assertTrue(containsIn(mapOf("a" to "z", "c" to "sour"), mapOf("a" to "z", "b" to "sweet", "c" to "sour")))
     }
 
     @Test
@@ -176,6 +178,10 @@ class Tests {
                 mapOf("MSFT" to 150.0, "NFLX" to 45.0),
                 averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0, "NFLX" to 50.0))
         )
+        assertEquals(
+                mapOf("MSFT" to 140.0, "NFLX" to 45.0),
+                averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "MSFT" to 120.0, "NFLX" to 40.0, "NFLX" to 50.0))
+        )
     }
 
     @Test
@@ -194,11 +200,19 @@ class Tests {
                         "печенье"
                 )
         )
+        assertEquals(
+                "Орео",
+                findCheapestStuff(
+                        mapOf("Мария" to ("печенье" to 100.0), "Орео" to ("печенье" to 20.0)),
+                        "печенье"
+                )
+        )
     }
 
     @Test
     @Tag("Hard")
     fun propagateHandshakes() {
+        /*
         assertEquals(
                 mapOf(
                         "Marat" to setOf("Mikhail", "Sveta"),
@@ -212,6 +226,7 @@ class Tests {
                         )
                 )
         )
+        */
         assertEquals(
                 mapOf(
                         "Marat" to setOf("Mikhail", "Sveta"),
@@ -223,6 +238,22 @@ class Tests {
                                 "Marat" to setOf("Mikhail", "Sveta"),
                                 "Sveta" to setOf("Marat"),
                                 "Mikhail" to setOf("Sveta")
+                        )
+                )
+        )
+        assertEquals(
+                mapOf(
+                        "Marat" to setOf("Mikhail", "Sveta"),
+                        "Sveta" to setOf("Marat", "Mikhail"),
+                        "Mikhail" to setOf("Sveta", "Marat"),
+                        "Andrew" to setOf("Sveta", "Marat", "Mikhail")
+                ),
+                propagateHandshakes(
+                        mapOf(
+                                "Marat" to setOf("Mikhail", "Sveta"),
+                                "Sveta" to setOf("Marat"),
+                                "Mikhail" to setOf("Sveta"),
+                                "Andrew" to setOf("Sveta")
                         )
                 )
         )
@@ -266,6 +297,9 @@ class Tests {
         assertFalse(canBuildFrom(emptyList(), "foo"))
         assertTrue(canBuildFrom(listOf('a', 'b', 'o'), "baobab"))
         assertFalse(canBuildFrom(listOf('a', 'm', 'r'), "Marat"))
+        assertTrue(canBuildFrom(listOf('t', 'r', 'u', 'e'), "True"))
+        assertTrue(canBuildFrom(listOf('b', 'a', 'm', 'r', 't'), "Marat"))
+        assertFalse(canBuildFrom(listOf('a', 'm', 'c'), "Cat"))
     }
 
     @Test
@@ -329,5 +363,5 @@ class Tests {
         )
     }
 
-    // TODO: map task tests
+// TODO: map task tests
 }
