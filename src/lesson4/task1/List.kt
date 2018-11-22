@@ -193,11 +193,15 @@ fun factorize(n: Int): List<Int> {
     var i = 2
 
     if (isPrime(old)) return list + n else {
-        while (!isPrime(old)) {
+        while (true) {
+            if (isPrime(old)) {
+                return list + old
+            }
             if (old % i == 0) {
                 old /= i
                 list.add(i)
-            } else i++
+            } else
+                i++
         }
     }
     list.add(old)
@@ -266,16 +270,8 @@ fun decimal(digits: List<Int>, base: Int): Int =
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int {
-
-    val list = str.chunked(1)
-    val list2 = list.map { it -> it.single().toInt() }
-
-    return list2.foldIndexed(0.0) { index, sum, it ->
-        if (it < 90) sum + (it - 48) * base.toDouble().pow(list2.size - 1 - index)
-        else sum + (it - 87) * base.toDouble().pow(list2.size - 1 - index)
-    }.toInt()
-}
+fun decimalFromString(str: String, base: Int): Int =
+        decimal(str.map { if (it.toInt() < 90) it.toInt() - 48 else it.toInt() - 87 }, base)
 
 /**
  * Сложная
@@ -308,18 +304,29 @@ fun russian(n: Int): String {
     val digits = listOf(n % 10, n / 10 % 10, n / 100 % 10, n / 1000 % 10, n / 10000 % 10, n / 100000)
 
     answer += hundreds[digits[5]] +
-            if (digits[4] == 1) tenToNineteen[digits[3]] else decades[digits[4]] +
-                    if (digits[4] != 1) if (digits[3] != 1 && digits[3] != 2) units[digits[3]] else units[12 - digits[3]] else ""
+            if (digits[4] == 1)
+                tenToNineteen[digits[3]]
+            else decades[digits[4]] +
+                    if (digits[4] != 1)
+                        if (digits[3] != 1 && digits[3] != 2)
+                            units[digits[3]]
+                        else units[12 - digits[3]]
+                    else ""
 
-    if (digits[3] != 0 || digits[4] != 0 || digits[5] != 0) answer += if (digits[4] != 1) when {
-        digits[3] == 1 -> " тысяча"
-        digits[3] == 2 || digits[3] == 3 || digits[3] == 4 -> " тысячи"
-        else -> " тысяч"
-    } else " тысяч"
+    if (digits[3] != 0 || digits[4] != 0 || digits[5] != 0) answer +=
+            if (digits[4] != 1) when {
+                digits[3] == 1 -> " тысяча"
+                digits[3] == 2 || digits[3] == 3 || digits[3] == 4 -> " тысячи"
+                else -> " тысяч"
+            } else " тысяч"
 
     answer += hundreds[digits[2]] +
-            if (digits[1] == 1) tenToNineteen[digits[0]] else decades[digits[1]] +
-                    if (digits[1] != 1) units[digits[0]] else ""
+            if (digits[1] == 1)
+                tenToNineteen[digits[0]]
+            else decades[digits[1]] +
+                    if (digits[1] != 1)
+                        units[digits[0]]
+                    else ""
 
     return answer.trim()
 }
