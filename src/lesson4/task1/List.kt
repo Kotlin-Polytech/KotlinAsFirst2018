@@ -204,8 +204,6 @@ fun factorize(n: Int): List<Int> {
                 i++
         }
     }
-    list.add(old)
-    return list.sorted()
 }
 
 /**
