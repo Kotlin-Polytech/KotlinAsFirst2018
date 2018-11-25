@@ -289,6 +289,21 @@ class Tests {
                 emptyList<String>(),
                 whoAreInBoth(listOf("Marat", "Mikhail"), listOf("Sveta", "Kirill"))
         )
+        assertEquals(
+                listOf("VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1"),
+                whoAreInBoth(listOf("VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1",
+                        "VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1",
+                        "VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1",
+                        "VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1",
+                        "VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1",
+                        "VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1",
+                        "VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1",
+                        "VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1"),
+                        listOf("VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1",
+                                "VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1",
+                                "VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1",
+                                "VRixxdy}J.]Bx(L;wM~S+rbhZh=DI.s|;+Robz*?FX{E:x=/J;H1"))
+        )
     }
 
     @Test
@@ -300,6 +315,7 @@ class Tests {
         assertTrue(canBuildFrom(listOf('t', 'r', 'u', 'e'), "True"))
         assertTrue(canBuildFrom(listOf('b', 'a', 'm', 'r', 't'), "Marat"))
         assertFalse(canBuildFrom(listOf('a', 'm', 'c'), "Cat"))
+        assertTrue(canBuildFrom(listOf(' ', 'M', 'ᠢ', '⼵'), ""))
     }
 
     @Test
@@ -325,6 +341,7 @@ class Tests {
         assertFalse(hasAnagrams(emptyList()))
         assertTrue(hasAnagrams(listOf("рот", "свет", "тор")))
         assertFalse(hasAnagrams(listOf("рот", "свет", "код", "дверь")))
+        assertTrue(hasAnagrams(listOf("", "]", " 6Zu`", "", "V", "")))
     }
 
     @Test
@@ -350,6 +367,18 @@ class Tests {
                 Pair(-1, -1),
                 findSumOfTwo(listOf(2, 3, 4, 5, 6, 1, 8, 9, 12, 14, 3, 12, 15), 35)
         )
+        assertEquals(
+                Pair(0, 1),
+                findSumOfTwo(listOf(0, 1, 37563, 40699, 0, 25182, 40700, 40700, 38587, 7020, 35619), 1)
+        )
+        assertEquals(
+                Pair(0, 1),
+                findSumOfTwo(listOf(0, 12), 12)
+        )
+        assertEquals(
+                Pair(-1, -1),
+                findSumOfTwo(listOf(1, 37563, 40699, 2, 25182, 40700, 40700, 38587, 7020, 35619), 2)
+        )
     }
 
     @Test
@@ -368,6 +397,26 @@ class Tests {
                         mapOf("Кубок" to (500 to 2000), "Слиток" to (1000 to 5000)),
                         450
                 )
+        )
+        assertEquals(
+                setOf("2", "4"),
+                bagPacking(mapOf("1" to (3 to 1), "2" to (4 to 6), "3" to (5 to 4), "4" to (8 to 7), "5" to (9 to 6)),
+                        13)
+        )
+        assertEquals(
+                setOf("1", "2"),
+                bagPacking(mapOf("1" to (3 to 1), "2" to (4 to 6)),
+                        13)
+        )
+        assertEquals(
+                setOf("1", "3"),
+                bagPacking(mapOf("1" to (5 to 3), "2" to (10 to 5), "3" to (6 to 4), "4" to (5 to 2)),
+                        14)
+        )
+        assertEquals(
+                setOf("2", "3"),
+                bagPacking(mapOf("1" to (6 to 3), "2" to (5 to 4), "3" to (4 to 5)),
+                        10)
         )
     }
 

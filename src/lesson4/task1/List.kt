@@ -269,7 +269,7 @@ fun decimal(digits: List<Int>, base: Int): Int =
  * Например: str = "13c", base = 14 -> 250
  */
 fun decimalFromString(str: String, base: Int): Int =
-        decimal(str.map { if (it.toInt() < 90) it.toInt() - 48 else it.toInt() - 87 }, base)
+        decimal(str.map { if (it.toInt() < 90) it - '0' else it - 'a' + 10 }, base)
 
 /**
  * Сложная
@@ -279,7 +279,22 @@ fun decimalFromString(str: String, base: Int): Int =
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    val romanDigits = listOf("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
+    val arabianDigits = listOf(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
+    var number = n
+    var result = ""
+    var i = 0
+
+    while (number > 0) {
+        if (number >= arabianDigits[i]) {
+            number -= arabianDigits[i]
+            result += romanDigits[i]
+        } else i++
+    }
+
+    return result
+}
 
 /**
  * Очень сложная

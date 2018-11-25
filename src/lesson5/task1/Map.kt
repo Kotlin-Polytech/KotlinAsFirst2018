@@ -2,6 +2,8 @@
 
 package lesson5.task1
 
+import kotlin.math.*
+
 /**
  * Пример
  *
@@ -259,7 +261,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
     val list = mutableListOf<String>()
 
     for (element in a) {
-        if ((element in a) && (element in b)) {
+        if ((element in a) && (element in b) && (!list.contains(element))) {
             list.add(element)
         }
     }
@@ -277,17 +279,19 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     var c = -1
-    for (i in 0..(word.length - 1)) {
-        if (chars.contains(word[i].toLowerCase())) {
-            c++
-            continue
-        } else {
-            c++
-            break
-        }
-    }
-    return word[c].toLowerCase() in chars
 
+    return if (word.isEmpty()) true else {
+        for (i in 0 until word.length) {
+            if (chars.contains(word[i].toLowerCase())) {
+                c++
+                continue
+            } else {
+                c++
+                break
+            }
+        }
+        return word[c].toLowerCase() in chars
+    }
 }
 
 /**
@@ -324,17 +328,23 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  */
 fun hasAnagrams(words: List<String>): Boolean {
     var listOfLetters = listOf<String>()
-    var listOfWord = listOf<String>()
+    var listOfWord = words
+    val check = words.toSet()
 
-    for (i in 0..(words.size - 1)) {
-        listOfLetters += words[i].chunked(1)
-    }
+    return if (words.isEmpty()) false else {
+        if (listOfWord.size > check.size) true else {
 
-    for (i in 1..(listOfLetters.size - 1)) {
-        listOfWord = words[i].chunked(1)
-        if (listOfLetters.filter { it == listOfWord[i - 1] }.size >= 2) break else continue
+            for (i in 0 until words.size) {
+                listOfLetters += words[i].chunked(1)
+            }
+
+            for (i in 1 until listOfLetters.size) {
+                listOfWord = words[i].chunked(1)
+                if (listOfLetters.filter { it == listOfWord[i - 1] }.size >= 2) break else continue
+            }
+            return listOfLetters.filter { it == listOfWord[0] }.size >= 2
+        }
     }
-    return if (words.isNotEmpty()) listOfLetters.filter { it == listOfWord[0] }.size >= 2 else false
 }
 
 /**
@@ -354,9 +364,10 @@ fun hasAnagrams(words: List<String>): Boolean {
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int>  {
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     var c = 0
-    val set = list.filter { it >= number - list.max()!! }.toSet()
+    val set = list.filter { it >= number - list.max()!! && it <= number }.toSet()
+
     for (element in set) {
         if (set.contains(number - element)) {
             c = element
@@ -365,7 +376,8 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int>  {
             continue
         }
     }
-    return if (c != list.max() && c != 0 && list.isNotEmpty()) Pair(list.indexOf(c), list.indexOf(number - c)) else Pair(-1, -1)
+    return if (c != list.max() && list.isNotEmpty() && list.indexOf(c) != list.indexOf(number - c))
+        Pair(list.indexOf(c), list.indexOf(number - c)) else Pair(-1, -1)
 }
 
 /**
@@ -387,4 +399,47 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int>  {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val list = mutableListOf<Int>()
+    val table = mutableListOf(list)
+    var set = setOf<String>()
+
+    for (i in 0..capacity) {
+        list.add(0)
+    }
+
+    val name = mutableListOf<String>()
+    treasures.forEach { name.add(it.key) }
+
+    for (i in 1..treasures.size) {
+        table.add(mutableListOf(0))
+    }
+
+    for (k in 1..treasures.size) {
+        val treasure = treasures[name[k - 1]]!!
+
+        for (s in 1..capacity) {
+            if (treasure.first > s)
+                table[k].add(table[k - 1][s])
+            else
+                table[k].add(max(table[k - 1][s], table[k - 1][s - treasure.first] + treasure.second))
+        }
+    }
+
+    var k = treasures.size
+    var s = capacity
+
+    while (k > 0 && s > 0) {
+        val treasure = treasures[name[k - 1]]!!
+        if (table[k][s] == 0) return set
+        if (table[k][s] == table[k - 1][s]) k--
+        else {
+            set += name[k - 1]
+            k--
+            s -= treasure.first
+        }
+    }
+
+    return set
+}
+
